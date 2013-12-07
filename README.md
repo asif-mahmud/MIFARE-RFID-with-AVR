@@ -1,4 +1,4 @@
 RFID-With-AVR
 =============
 
-RFID tag reader using Atmel MCU
+MIFARE RC522 module library for Atmel MCU. Example availablefor Atmega48.
