@@ -1,0 +1,70 @@
+include Common
+
+all : MK_BUILD_DIR BUILD_C_OBJ BUILD_ASM_OBJ BUILD_ELF BUILD_HEX BUILD_EEP BUILD_LST BUILD_SYM SHOW_SIZE
+
+program-all : program lfuse hfuse efuse
+
+program :
+	$(SUDO) $(DUDE) -c $(PROGRAMMER) -p $(DEVICE) -U flash:w:$(BIN_FOLDER)/$(TARGET).hex:i
+	
+lfuse :
+	$(SUDO) $(DUDE) -c $(PROGRAMMER) -p $(DEVICE) -U lfuse:w:$(LFUSE):m
+
+hfuse :
+	$(SUDO) $(DUDE) -c $(PROGRAMMER) -p $(DEVICE) -U hfuse:w:$(HFUSE):m
+
+efuse :
+	$(SUDO) $(DUDE) -c $(PROGRAMMER) -p $(DEVICE) -U efuse:w:$(EFUSE):m
+
+clean : 
+	rm -rvf $(BIN_FOLDER)
+
+MK_BUILD_DIR :
+	mkdir -p $(BIN_FOLDER)
+
+BUILD_C_OBJ : $(C_OBJ)
+
+$(C_OBJ) : $(BIN_FOLDER)/%.o : $(SRC_FOLDER)/%.c
+	mkdir -p $(@D)
+	@echo "\033[33m"
+	@echo compiling $< :
+	@echo "\033[0m"
+	$(CC) -c $(CFLAGS) $< -o $@
+
+BUILD_ASM_OBJ : $(ASM_OBJ)
+
+$(ASM_OBJ) : $(BIN_FOLDER)/%.o : $(SRC_FOLDER)/%.S	
+	mkdir -p $(@D)
+	@echo "\033[33m"
+	@echo compiling $< :
+	@echo "\033[0m"
+	$(ASM) $(ASMFLAGS) -c $< -o $@
+
+BUILD_ELF :
+	@echo "\033[33m"Linking ... :"\033[0m"
+	$(LD) $(CFLAGS) $(C_OBJ) $(ASM_OBJ) --output $(BIN_FOLDER)/$(TARGET).elf $(LD_FLAGS)
+
+BUILD_HEX :
+	@echo "\033[33m"Creating HEX file ... :"\033[0m"
+	$(OBJCOPY) $(HEXFLAGS) -O ihex \
+	$(BIN_FOLDER)/$(TARGET).elf $(BIN_FOLDER)/$(TARGET).hex
+	
+BUILD_EEP :
+	@echo "\033[33m"Creating EEPROM file ... :"\033[0m"
+	$(OBJCOPY) $(EEPFLAGS) -O ihex \
+	$(BIN_FOLDER)/$(TARGET).elf $(BIN_FOLDER)/$(TARGET).eep
+
+BUILD_LST :
+	@echo "\033[33m"Creating LIST file ... :"\033[0m" 
+	$(OBJDUMP) -h -S -C \
+	$(BIN_FOLDER)/$(TARGET).elf > $(BIN_FOLDER)/$(TARGET).lst
+
+BUILD_SYM :
+	@echo "\033[33m"Creating SYM file ... :"\033[0m"
+	$(NM) -n $(BIN_FOLDER)/$(TARGET).elf > $(BIN_FOLDER)/$(TARGET).sym
+
+SHOW_SIZE :
+	@echo "\033[33m"
+	$(SIZE) -C --mcu=$(DEVICE) $(BIN_FOLDER)/$(TARGET).elf
+	@echo "\033[0m"
+

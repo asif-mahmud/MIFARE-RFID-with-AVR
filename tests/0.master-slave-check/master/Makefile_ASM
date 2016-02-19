@@ -1,0 +1,19 @@
+include Makefile.common
+
+#make object files
+all : $(ASM_OBJ)
+
+clean :
+	rm -f $(ASM_OBJ)
+	
+#make rules
+
+#
+#objs first
+#
+$(ASM_OBJ) : $(BIN_FOLDER)/%.o : $(SRC_FOLDER)/%.S	
+	mkdir -p $(@D)
+	@echo "\033[33m"
+	@echo compiling $< :
+	@echo "\033[0m"
+	$(ASM) $(ASMFLAGS) -c $< -o $@

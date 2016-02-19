@@ -1,0 +1,25 @@
+include Makefile.common
+
+#make c target
+all : $(C_OBJ)
+
+clean :
+	rm -f $(C_OBJ) $(C_DFILES)
+	
+
+#make rules
+
+#
+#objs first
+#
+$(C_OBJ) : $(BIN_FOLDER)/%.o : $(SRC_FOLDER)/%.c
+	mkdir -p $(@D)
+	@echo "\033[33m"
+	@echo compiling $< :
+	@echo "\033[0m"
+	$(CC) -c $(CFLAGS) $< -o $@
+
+
+
+
+	

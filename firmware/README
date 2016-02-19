@@ -1,0 +1,6 @@
+Files and their usage :
+
+1. Config : use this to configure your project
+2. README : You may use this for your project's readme.
+3. Makefile(_*) : these files are used to build on specific platform.
+4. Common : common compiler and linker setup.

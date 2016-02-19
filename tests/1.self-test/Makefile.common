@@ -1,0 +1,54 @@
+include Makefile.config
+
+#C compiler suite
+CC 	= avr-gcc
+OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
+SIZE    = avr-size
+NM      = avr-nm
+
+
+#c flags
+CFLAGS = -std=c99 \
+	-gdwarf-2 \
+	-mmcu=$(DEVICE) \
+	-Wall -Wextra \
+	-Os -Wp,-M,-MP,-MT,$(@D)/$(@F).o,-MF,$(@D)/$(@F).d \
+	$(C_INC) \
+	$(DEFS)
+
+#assembly compilersuite
+ASM  = avr-gcc
+
+
+#assembly flags
+ASMFLAGS = -gdwarf-2 \
+	-mmcu=$(DEVICE) \
+	-Wall -Wextra \
+	$(DEFS)
+
+
+#constructing the c files and object files
+C_SRC = $(addprefix $(SRC_FOLDER)/,$(C_SRC_FILES))
+C_OBJ_FILES = $(C_SRC_FILES:.c=.o)
+C_OBJ = $(addprefix $(BIN_FOLDER)/,$(C_OBJ_FILES))
+C_INC = $(addprefix -I,$(INCLUDE_FOLDER))
+C_DFILES = $(addsuffix .d,$(C_OBJ))
+
+#constructing the assmebly files and object files
+ASM_SRC = $(addprefix $(SRC_FOLDER)/,$(ASM_SRC_FILES))
+ASM_OBJ_FILES = $(ASM_SRC_FILES:.S=.o)
+ASM_OBJ = $(addprefix $(BIN_FOLDER)/,$(ASM_OBJ_FILES))
+
+
+#linking flags
+LD = avr-gcc
+LD_FLAGS := $(addprefix -l,$(LD_FLAGS))
+LINKER_FLAGS = -Wl,-Map=$(BIN_FOLDER)/$(TARGET).map -Wl,-lm   -mmcu=$(DEVICE)
+
+#construct defines
+DEFS += F_CPU=$(F_CPU)
+
+#constructing preprocessor defines
+DEFS := $(addprefix -D,$(DEFS))
+

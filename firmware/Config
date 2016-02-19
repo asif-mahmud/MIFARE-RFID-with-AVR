@@ -1,0 +1,76 @@
+#--------------------------------------------#
+#
+#	AVR Makefile suite
+#	Author : Asif Mahmud Shimon
+#	Version : 3
+#	License : GPLv3
+#	Usage : Easy to configure and to use Makefile 
+#			suite for AVR platform using GNU 
+#			Compiler suite.
+#
+#--------------------------------------------#
+#--------configure the project sources-------#
+
+#project title
+TARGET = rfid
+
+
+#source and header folder
+SRC_FOLDER = src
+BIN_FOLDER = bin
+INCLUDE_FOLDER = src/include
+
+#-----------C SOURCES------------------------#
+C_SRC_FILES = main.c \
+			lib/lcd.c \
+			lib/mfrc522.c \
+			lib/spi.c
+
+
+#----------assembly sources------------------#
+ASM_SRC_FILES = 
+
+#--------------------------------------------#
+
+#device configuration
+DEVICE = atmega48
+F_CPU  = 8000000
+LFUSE  = 0xE7
+HFUSE  = 0xD7
+EFUSE  = 0x01
+
+#preprocessors defines
+DEFS  = 
+
+
+#libraries to link
+LD_FLAGS =
+
+#programmer
+#if in linux use sudo
+SUDO = su
+DUDE = avrdude
+PROGRAMMER = usbasp
+
+# Minimalistic printf version
+PRINTF_LIB_MIN = -Wl,-u,vfprintf -lprintf_min
+# Floating point printf version (requires MATH_LIB = -lm below)
+PRINTF_LIB_FLOAT = -Wl,-u,vfprintf -lprintf_flt
+# Minimalistic scanf version
+SCANF_LIB_MIN = -Wl,-u,vfscanf -lscanf_min
+# Floating point + %[ scanf version (requires MATH_LIB = -lm below)
+SCANF_LIB_FLOAT = -Wl,-u,vfscanf -lscanf_flt
+
+
+# If this is left blank, then it will use the Standard printf version.
+PRINTF_LIB = 
+#PRINTF_LIB = $(PRINTF_LIB_MIN)
+#PRINTF_LIB = $(PRINTF_LIB_FLOAT)
+
+# If this is left blank, then it will use the Standard scanf version.
+SCANF_LIB = 
+#SCANF_LIB = $(SCANF_LIB_MIN)
+#SCANF_LIB = $(SCANF_LIB_FLOAT)
+
+
+#-------Thats all needed---------------------#
